@@ -638,3 +638,12 @@ O Core continua responsável por:
 Validações e normalizações do GeoJSON
 Cálculo do centro ideal do quarteirão
 Regras de domínio (Value Objects, Entidades e Casos de Uso)
+
+Importação de GeoJSON (MVP)
+O frontend lê o arquivo .geojson, faz JSON.parse e envia o objeto para o backend via application/json.
+Endpoint: POST /api/quarteiroes/importacao/geojson
+O Core recebe:
+
+geojson (objeto)
+mapaDeImportacao (mapeamento das properties relevantes)
+modo (tolerante no início; estrito quando o campo oficial do número estiver definido)
