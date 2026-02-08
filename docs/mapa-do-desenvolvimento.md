@@ -624,3 +624,17 @@ Após a entrega do MVP, as seguintes funcionalidades e melhorias podem ser consi
 • **Integração com Sistemas de Saúde:**Conectar a aplicação a sistemas de informação em saúde existentes para enriquecer os dados dos quarteirões.
 • **Otimização de Performance:**Para grandes volumes de dados GeoJSON, explorar otimizações de renderização e processamento.
 • **Modo Offline:**Permitir o uso da aplicação e visualização de mapas mesmo sem conexão à internet.
+
+Biblioteca de mapa (MVP)
+A renderização do mapa no frontend usará Leaflet com react-leaflet.
+O pacote @core não terá dependências de bibliotecas de mapa.
+A integração com Leaflet será feita no frontend via um adaptador de visualização, responsável por:
+
+Converter Poligono/coordenadas do Core para o formato GeoJSON aceito pelo Leaflet.
+Registrar eventos de interação (clique no polígono) e acionar a UI de detalhes do quarteirão.
+
+O Core continua responsável por:
+
+Validações e normalizações do GeoJSON
+Cálculo do centro ideal do quarteirão
+Regras de domínio (Value Objects, Entidades e Casos de Uso)
