@@ -1,0 +1,14 @@
+{
+	"name": "mapa-quarteiroes-saude",
+	"private": true,
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"scripts": {
+		"dev": "pnpm -ws run dev",
+		"build": "pnpm -ws run build",
+		"lint": "pnpm -ws run lint",
+		"test": "pnpm -ws run test"
+	}
+}
