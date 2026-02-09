@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "paths": {
+      "core": ["../../packages/core/src/index"]
+    },
+    "types": ["node"],
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,

@@ -647,3 +647,47 @@ O Core recebe:
 geojson (objeto)
 mapaDeImportacao (mapeamento das properties relevantes)
 modo (tolerante no início; estrito quando o campo oficial do número estiver definido)
+
+Entrada para o “Mapa do Desenvolvimento” (Markdown)ESLint type-aware no monorepo (NestJS + TypeScript) — como evitar falsos positivosContexto
+No backend usamos flat config (eslint.config.mjs) com typescript-eslint e recommendedTypeChecked, habilitando análise type-aware via:
+parserOptions.projectService: true
+tsconfigRootDir: import.meta.dirname
+Isso melhora muito a qualidade do lint, mas exige cuidados no monorepo.Sintomas típicos (quando dá ruim)
+Avisos/erros como:
+
+“Unsafe assignment of an error typed value.”
+“Unsafe call of a type that could not be resolved” (@typescript-eslint/no-unsafe-call)
+“Unsafe member access … on a type that cannot be resolved”
+
+Erros de parsing:
+
+Parsing error: <arquivo> was not found by the project service
+
+Geralmente aparecem em:
+
+dist/** (output do build)
+**/\*.d.ts
+arquivos de configuração (ex.: eslint.config.mjs)
+eslint . rodando na raiz do app
+
+Causa raizCom projectService: true, o parser do TypeScript usado pelo ESLint só consegue analisar (com tipos) arquivos que ele reconhece como parte do “projeto TS”.
+Se o ESLint tenta lintar arquivos como dist/**, .d.ts ou configs, eles não estão no tsconfig, o “project service” falha e o ESLint passa a acusar falsos positivos do tipo “unsafe”.Solução padrão (aplicada no backend)1) Ignorar build output e arquivos que não devem ser lintados
+Ignorar dist/**, node_modules/**, eslint.config.mjs, **/\*.d.ts (opcional, mas recomendado) 2) Limitar o type-aware lint somente ao código-fonte
+Aplicar recommendedTypeChecked apenas em:
+
+src/**/\*.ts
+test/**/\*.ts (se quiser)
+arquivos específicos (ex.: prisma.config.ts)
+
+3. Evitar eslint .
+   Preferir lint direcionado aos arquivos TS relevantes.
+   Snippet de referência (backend eslint.config.mjs)
+   Objetivo: type-aware lint somente em src/test, sem “project service parsing errors”.
+
+ignores: dist/**, eslint.config.mjs, etc.
+files: escopo do lint type-checked
+(Manter esse padrão sempre que criar novos apps no monorepo.)Comandos recomendadosRodar lint somente no que importa:pnpm -C apps/backend exec eslint "src/**/_.ts" "test/\*\*/_.ts" "prisma.config.ts"Modo estrito (falha em warnings):pnpm -C apps/backend exec eslint "src/**/\*.ts" "test/**/_.ts" "prisma.config.ts" --max-warnings=0Checklist rápido (quando aparecer “error typed value”)
+dist/** está em ignores?
+O recommendedTypeChecked está limitado via files: ['src/**/_.ts', ...]?
+Você está rodando eslint . sem querer?
+O tsconfigRootDir está apontando para o diretório certo do app?
